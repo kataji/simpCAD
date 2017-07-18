@@ -3,6 +3,7 @@ package simpCAD;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -14,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashSet;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -33,7 +35,6 @@ import javax.swing.filechooser.FileFilter;
 import figure.Ellipse;
 import figure.Figure;
 import figure.Line;
-import figure.Point;
 import figure.Rectangle;
 import figure.StringFigure;
 import view.Canvas;
@@ -54,7 +55,8 @@ public class SimpCAD extends JPanel {
 	private Point lastEndPoint;
 	private Figure pendingFigure = null;
 	private Figure selectedFigure = null;
-	private GenericSet<Figure> figures = new GenericSet<>(Figure.class);
+//	private GenericSet<Figure> figures = new GenericSet<>(Figure.class);
+	private HashSet<Figure> figures = new HashSet<>();
 	
 	public SimpCAD() {
 		setUpMenuBar();

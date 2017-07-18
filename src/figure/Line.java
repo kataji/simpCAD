@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
@@ -19,8 +20,8 @@ public class Line extends Line2D.Double implements Figure {
 	public void draw(Graphics g) {
 		g.setColor(color);
 		((Graphics2D)g).setStroke(new BasicStroke(strokeWidth));
-		((Graphics2D)g).drawLine((int)super.getX1(), (int)super.getY1(), 
-				(int)super.getX2(), (int)super.getY2());
+		((Graphics2D)g).drawLine((int)getX1(), (int)getY1(), 
+				(int)getX2(), (int)getY2());
 	}
 	
 	@Override
@@ -44,10 +45,10 @@ public class Line extends Line2D.Double implements Figure {
 	@Override
 	public void setSizePercent(double sizePercent) {
 		Point2D p = getCenter();
-		super.x1 = super.x1 * sizePercent + p.getX() * (1 - sizePercent);
-		super.y1 = super.y1 * sizePercent + p.getY() * (1 - sizePercent);
-		super.x2 = super.x2 * sizePercent + p.getX() * (1 - sizePercent);
-		super.y2 = super.y2 * sizePercent + p.getY() * (1 - sizePercent);
+		x1 = x1 * sizePercent + p.getX() * (1 - sizePercent);
+		y1 = y1 * sizePercent + p.getY() * (1 - sizePercent);
+		x2 = x2 * sizePercent + p.getX() * (1 - sizePercent);
+		y2 = y2 * sizePercent + p.getY() * (1 - sizePercent);
 	}
 
 	@Override
@@ -59,15 +60,15 @@ public class Line extends Line2D.Double implements Figure {
 	public void setLocation(Point start, Point end) {
 		double dX = end.getX() - start.getX();
 		double dY = end.getY() - start.getY();
-		super.x1 += dX;
-		super.x2 += dX;
-		super.y1 += dY;
-		super.y2 += dY;
+		x1 += dX;
+		x2 += dX;
+		y1 += dY;
+		y2 += dY;
 	}
 
 	@Override
 	public Point getCenter() {
-		return new Point((super.x1 + super.x2) / 2, 
-				(super.y1 + super.y2) / 2);
+		return new Point(((int)(x1 + x2) / 2), 
+				(int)((y1 + y2) / 2));
 	}
 }

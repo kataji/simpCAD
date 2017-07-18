@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
 public class Rectangle extends Rectangle2D.Float implements Figure {
@@ -74,7 +75,7 @@ public class Rectangle extends Rectangle2D.Float implements Figure {
 
 	@Override
 	public Point getCenter() {
-		return new Point(x + width/2, y + height/2);
+		return new Point((int)(x + width/2), (int)(y + height/2));
 	}
 
 	@Override
