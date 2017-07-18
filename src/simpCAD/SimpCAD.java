@@ -8,16 +8,28 @@ import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashSet;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.filechooser.FileFilter;
 
 import figure.Ellipse;
 import figure.Figure;
@@ -26,6 +38,13 @@ import figure.StringFigure;
 import view.Canvas;
 
 public class SimpCAD extends JPanel {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3154132016887305133L;
+	
+	private JMenuBar menuBar;
 	
 	private JButton lineButton;
 	private JButton rectangleButton;
@@ -43,8 +62,97 @@ public class SimpCAD extends JPanel {
 	private HashSet<Figure> figures = new HashSet<>();
 	
 	public SimpCAD() {
+		
+		//set up menu bar
+		menuBar = new JMenuBar();
+		JMenu fileMenu = new JMenu("文件");
+		JMenu helpMenu = new JMenu("帮助");
+		JMenuItem openMenuItem = new JMenuItem("打开...");
+		JMenuItem saveMenuItem = new JMenuItem("保存...");
+		JMenuItem welcomeMenuItem = new JMenuItem("欢迎");
+		JMenuItem aboutMenuItem = new JMenuItem("关于");
+		
+		JFileChooser fc = new JFileChooser();
+		FileFilter filter = new FileFilter() {
+			public boolean accept(File f) {
+				if (f == null )
+					return false;
+				return f.isDirectory() || (f.isFile() && (
+						f.getName().endsWith(".dat") || 
+						f.getName().endsWith(".DAT")));
+			} 
+
+			public String getDescription() { 
+				return "DAT文件格式"; 
+			} 
+		};
+		fc.setFileFilter(filter);
+		
+		openMenuItem.addActionListener(e -> {
+			
+			int result = fc.showOpenDialog(this);
+			
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				Object o = readObjectFromFile(file);
+				if (o instanceof HashSet<?>) {
+					o = (HashSet<?>) o;
+					if(o.getClass().equals(figures.getClass())) {
+						HashSet<Figure> newFigures = (HashSet<Figure>) o;
+						figures.clear();
+						figures.addAll(newFigures);
+						canvas.repaint();
+					}					
+				}
+			}
+			
+		});
+		
+		saveMenuItem.addActionListener(e -> {
+			int result = fc.showSaveDialog(this);
+			
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();			
+				if(file.exists()) {  
+					int ret = javax.swing.JOptionPane.showConfirmDialog(
+							this, "该文件已经存在，确定要覆盖吗？"); 
+					if (ret != javax.swing.JOptionPane.YES_OPTION)
+						return; 
+				} 
+				
+				String path = file.getAbsolutePath(); 
+				if(!path.endsWith(".dat") && !path.endsWith(".DAT")) {
+					path = path.concat(".dat"); 
+				}
+				file = new File(path);
+				
+				try {  
+					file.createNewFile();
+					writeObjectToFile(figures, file);
+				} catch(Exception e1) {  
+					javax.swing.JOptionPane.showMessageDialog(
+							this, "出错：" + e1.getMessage());  
+					e1.printStackTrace();
+					return ; 
+				} 
+			}
+			
+		});
+		
+		fileMenu.add(openMenuItem);
+		fileMenu.add(saveMenuItem);
+		helpMenu.add(welcomeMenuItem);
+		helpMenu.add(aboutMenuItem);
+		
+		menuBar.add(fileMenu);
+		menuBar.add(helpMenu);
+
+		
+		
 		// setup the canvas
 		canvas = new Canvas(figures);
+		canvas.setOpaque(true);
+		canvas.setBackground(Color.WHITE);
 		canvas.setPreferredSize(new Dimension(900, 600));
 		canvas.addMouseListener(new MouseInputAdapter() {
 
@@ -191,7 +299,53 @@ public class SimpCAD extends JPanel {
 		this.setLayout(new BorderLayout());
 		add(toolBar, BorderLayout.LINE_END);
 		add(canvas, BorderLayout.CENTER);
+		add(menuBar, BorderLayout.PAGE_START);
 	}
+	
+	/*
+	 * 如下关于对象在文件中的读写的代码来自：
+	 * http://www.cnblogs.com/hrlnw/p/3617478.html
+	 */
+	
+    public void writeObjectToFile(Object obj, File file)
+    {
+        FileOutputStream out;
+        try {
+            out = new FileOutputStream(file);
+            ObjectOutputStream objOut=new ObjectOutputStream(out);
+            objOut.writeObject(obj);
+            objOut.flush();
+            objOut.close();
+        } catch (IOException e) {
+        	JOptionPane.showMessageDialog(
+					this, "出错：" + e.getMessage()); 
+        	e.printStackTrace();
+        }
+    }
+	
+	public Object readObjectFromFile(File file)
+    {
+        Object temp=null;
+        FileInputStream in;
+         {
+            try {
+				in = new FileInputStream(file);
+	            ObjectInputStream objIn = new ObjectInputStream(in);
+	            temp = objIn.readObject();
+	            objIn.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				javax.swing.JOptionPane.showMessageDialog(
+						this, "出错：" + "文件类型不正确");  
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+
+        } 
+        return temp;
+    }
 	
     /**
      * Create the GUI and show it.  For thread safety,

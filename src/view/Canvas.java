@@ -21,4 +21,6 @@ public class Canvas extends JPanel{
 			f.draw(g);
 		}
 	}
+	
+	
 }

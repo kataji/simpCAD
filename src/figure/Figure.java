@@ -9,8 +9,9 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
+import java.io.Serializable;
 
-public abstract class Figure extends RectangularShape{
+public abstract class Figure extends RectangularShape implements Serializable{
 	
 	protected int x;
 	protected int y;

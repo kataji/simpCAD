@@ -1,95 +1,105 @@
-package simpCAD;
-
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputAdapter;
-
-public class Trial extends JPanel{
-	private JPanel canvas;
-	
-	public Trial() {
-		canvas = new JPanel();
-		canvas.setPreferredSize(new Dimension(500, 500));
-		canvas.setFocusable(true);
-		canvas.addMouseListener(new MouseInputAdapter() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				canvas.requestFocusInWindow();
-				System.out.println("requested focus");
-			}
-		});		
-		
-		canvas.addKeyListener(new KeyAdapter() {
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				/*
-				 * [KEY_PRESSED,
-					keyText=Ctrl,
-					keyCode=17,
-					rawCode=17,
-					extendedKeyCode=0x11
-					modifiers=Ctrl,
-					extModifiers=Ctrl,] 
-				 */
-				System.out.println("id:" + e.getID());
-				System.out.println("Text:" + e.getKeyText(e.getKeyCode()));
-				System.out.println("keyCode:" + e.getKeyCode());
-				System.out.println("exKeyCode" + e.getExtendedKeyCode());
-				System.out.println("keyMod:" + e.getModifiers());
-				System.out.println("exKeyMod:" + e.getModifiersEx());
-				System.out.println();
-				if (e.isControlDown()){
-					int keyCode = e.getExtendedKeyCode();
-					switch (keyCode) {
-					case KeyEvent.VK_COMMA:
-						System.out.println("evoked ctrl + , ");
-						break;
-					case KeyEvent.VK_PERIOD:
-						System.out.println("evoked ctrl + . ");
-						break;
-					case KeyEvent.VK_OPEN_BRACKET:
-						System.out.println("evoked ctrl + [ ");
-						break;
-					case KeyEvent.VK_CLOSE_BRACKET:
-						System.out.println("evoked ctrl + ] ");
-						break;
-					}
-					canvas.repaint();
-				}
-			}			
-		});
-		
-		add(canvas);
-	}
-	
-	
-    private static void createAndShowGUI() {
-        JFrame frame = new JFrame("simpCAD");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        frame.add(new Trial());
-
-        frame.pack();
-        frame.setVisible(true);
-    }
-    
-    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                createAndShowGUI();
-//            }
-//        });
-    	System.out.println(Toolkit.getDefaultToolkit().getScreenResolution());
-    }
-
-}
+//package simpCAD;
+//
+//import java.awt.Dimension;
+//import java.awt.Toolkit;
+//import java.awt.event.KeyAdapter;
+//import java.awt.event.KeyEvent;
+//import java.awt.event.KeyListener;
+//import java.awt.event.MouseEvent;
+//import java.io.File;
+//
+//import javax.swing.JFrame;
+//import javax.swing.JPanel;
+//import javax.swing.SwingUtilities;
+//import javax.swing.event.MouseInputAdapter;
+//import javax.swing.filechooser.FileFilter;
+//
+//public class Trial extends JPanel {
+////	
+////	public void mouseClicked(MouseEvent arg0) { 
+////		
+//		javax.swing.JFileChooser fc = new javax.swing.JFileChooser() { 
+//			public String paramString() {  
+//				return "drhdrhdrh"; 
+//			}
+//		};// 这里新建一个chooser    
+//			
+//		FileFilter filter = new FileFilter() {
+//			public boolean accept(File f) { 
+//				return f.isDirectory() || (f.isFile() && (
+//						f.getName().endsWith(".htm")
+//						|| f.getName().endsWith(".HTM") 
+//						|| f.getName().endsWith(".html") 
+//						|| f.getName().endsWith(".HTML") 
+//						)); // 新建一个文件类型过滤器
+//			} 
+//
+//			public String getDescription() { 
+//				return "保存为HTML文件格式"; 
+//			} 
+//		};
+//
+//		public Trial() {
+//			
+//		
+//		fc.setFileFilter(filter);
+//		int i = fc.showSaveDialog(this); // 打开保存文件对话框
+//		String fname = null;
+//		if(i == javax.swing.JFileChooser.APPROVE_OPTION) {
+//			System.out.println("approved");
+//			File file = fc.getSelectedFile();
+//			System.out.println(file.getAbsolutePath());
+//			// 注意这里，和下面一句, 如果这里并没有选取中任何的文件
+//			//下面的jfc.getName(f)将会返回手输入的文件名
+//			fname = fc.getName(file); 
+//			if(fname != null && fname.trim().length()>0) {
+//				if(fname.endsWith(".htm") || fname.endsWith(".HTM")
+//						|| fname.endsWith(".html") || fname.endsWith(".HTML"));
+//				else {
+//					fname = fname.concat(".htm"); 
+//				} 
+//			} 
+//
+//			System.out.println(fname);
+//			
+//			if(file.isFile()) {
+//				fname = file.getName(); 
+//				System.out.println("file isFile");
+//				System.out.println("newly got file name: " + fname);
+//			}
+//				
+//
+//			file = fc.getCurrentDirectory();
+//			// 取得要保存的文件的目录,其实getSelectedFile();
+//			// 已经包括了文件路径,这里这样是让大家更易了解
+//
+//			file = new File(file.getPath().concat(File.separator).concat(fname));
+//
+//			System.out.println("new file: " + file);
+//			if(file.exists()) {  
+//				i = javax.swing.JOptionPane.showConfirmDialog(
+//						this, "该文件已经存在，确定要覆盖吗？"); 
+//
+//				if(i == javax.swing.JOptionPane.YES_OPTION);     
+//				else 
+//					return ; 
+//			} 
+////
+////			try {  
+//				file.createNewFile();
+////				java.io.FileWriter fw = new java.io.FileWriter(file);  
+//////				fw.write(getJtp_html().getText()); 
+////				fw.close();
+////				// 向要保存的文件写数据 
+////			} catch(Exception ex) {  
+////				javax.swing.JOptionPane.showMessageDialog(
+////						this, "出错：" + ex.getMessage());  
+////				return ; 
+////			} 
+//		}
+//	}  
+//	
+//	public static void main(String[] args) {
+//		new Trial();
+//	}
+//}
