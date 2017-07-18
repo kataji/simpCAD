@@ -7,7 +7,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
@@ -19,10 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
-import javax.swing.plaf.ColorChooserUI;
 
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
-
+import figure.Ellipse;
 import figure.Figure;
 import figure.Line;
 import figure.StringFigure;
@@ -46,9 +43,6 @@ public class SimpCAD extends JPanel {
 	private HashSet<Figure> figures = new HashSet<>();
 	
 	public SimpCAD() {
-		// things to be put in frame
-		
-		
 		// setup the canvas
 		canvas = new Canvas(figures);
 		canvas.setPreferredSize(new Dimension(900, 600));
@@ -61,7 +55,7 @@ public class SimpCAD extends JPanel {
 				boolean selectSuccess = false;
 				Rectangle r = new Rectangle(p.x - 8, p.y - 8, 16, 16);
 				for(Figure f : figures) {
-					if (f.intersects(r)) {
+					if (f.isSelected(r)) {
 						selectedFigure = f;
 						selectSuccess = true;
 						System.out.println("selected " + f);
@@ -126,10 +120,9 @@ public class SimpCAD extends JPanel {
 					if (e.isControlDown()){
 						int keyCode = e.getExtendedKeyCode();
 						switch (keyCode) {
-						case KeyEvent.VK_COMMA:
-							System.out.println("evoked ctrl + , ");
+						case KeyEvent.VK_MINUS:
 							selectedFigure.setSizePercent(0.8); break;
-						case KeyEvent.VK_PERIOD:
+						case KeyEvent.VK_EQUALS:
 							selectedFigure.setSizePercent(1.2); break;
 						case KeyEvent.VK_OPEN_BRACKET:
 							selectedFigure.changeStrokeWidth(-1); break;
@@ -157,6 +150,16 @@ public class SimpCAD extends JPanel {
 		lineButton.addActionListener( e -> {
 			pendingFigure = new Line();
 			System.out.println("pending Line");
+		});
+		
+		rectangleButton.addActionListener(e -> {
+			pendingFigure = new figure.Rectangle();
+			System.out.println("pending Rect");
+		});
+		
+		ellipseButton.addActionListener(e -> {
+			pendingFigure = new Ellipse();
+			System.out.println("pending ellipse");
 		});
 		
 		textButton.addActionListener(e -> {

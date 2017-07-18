@@ -3,6 +3,7 @@ package figure;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -65,14 +66,15 @@ public abstract class Figure extends RectangularShape{
 
 	@Override
 	public boolean intersects(double x, double y, double w, double h) {		
-		return Math.abs((2*this.x + width)-(2*x + w)) < width + w
-				&& Math.abs((2*this.y + height)-(2*y + h)) < height + h;
+		return (contains(x, y) || contains(x + w, y) 
+				|| contains(x, y + h) || contains(x + w, y + h)) && 
+				!contains(x, y, w, h);
 	}
 
 	@Override
-	public boolean contains(double x, double y, double w, double h) {
-		return this.x <= x && x + w <= this.x + width &&
-				this.y <= y && y + h <= this.y + height;
+	public boolean contains(double x, double y, double w, double h) {		
+		return contains(x, y) && contains(x + w, y) 
+				&& contains(x, y + h) && contains(x + w, y + h);
 	}
 
 	@Override
@@ -115,12 +117,19 @@ public abstract class Figure extends RectangularShape{
 	}
 
 	public void changeStrokeWidth(float inc) {
-		strokeWidth += inc;
+		float newStrokeWidth = strokeWidth + inc;
+		if (newStrokeWidth >= 1) {
+			strokeWidth = newStrokeWidth;
+		}
 	}
 	
 	public void setLocation(Point start, Point end) {
 		x = x + end.x - start.x;
 		y = y + end.y - start.y;
 		center.setLocation(x + width/2.0, y + height/2.0);
+	}
+
+	public boolean isSelected(Rectangle r) {
+		return intersects(r);
 	}
 }
