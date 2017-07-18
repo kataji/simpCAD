@@ -1,10 +1,13 @@
 package figure;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.Ellipse2D;
 
-public class Ellipse extends Figure {
+public class Ellipse extends Ellipse2D.Double implements Figure {
 
 	@Override
 	public void draw(Graphics g) {
@@ -26,6 +29,42 @@ public class Ellipse extends Figure {
 			double dY = y - this.y;
 			return b2*dX*dX + a2*dY*dY - a2*b2 < 0;	
 		}
+	}
+
+	@Override
+	public void setColor(Color color) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSizePercent(double sizePercent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setFigure(Point p1, Point p2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void changeStrokeWidth(float inc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setLocation(Point start, Point end) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isSelected(Rectangle r) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

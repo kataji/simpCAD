@@ -10,7 +10,7 @@ import java.text.AttributedCharacterIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringFigure extends Figure {
+public class StringFigure extends figure.Rectangle implements Figure {
 	private String str;
 
 	public StringFigure(String input) {
