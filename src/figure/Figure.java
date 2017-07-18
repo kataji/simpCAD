@@ -117,4 +117,10 @@ public abstract class Figure extends RectangularShape{
 	public void changeStrokeWidth(float inc) {
 		strokeWidth += inc;
 	}
+	
+	public void setLocation(Point start, Point end) {
+		x = x + end.x - start.x;
+		y = y + end.y - start.y;
+		center.setLocation(x + width/2.0, y + height/2.0);
+	}
 }

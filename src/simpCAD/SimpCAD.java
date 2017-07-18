@@ -40,6 +40,7 @@ public class SimpCAD extends JPanel {
 	
 	private Point startPoint;
 	private Point endPoint;
+	private Point lastEndPoint;
 	private Figure pendingFigure = null;
 	private Figure selectedFigure = null;
 	private HashSet<Figure> figures = new HashSet<>();
@@ -56,10 +57,9 @@ public class SimpCAD extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				canvas.requestFocusInWindow();
-//				System.out.println("clicked");
 				Point p = e.getPoint();
 				boolean selectSuccess = false;
-				Rectangle r = new Rectangle(p.x - 10, p.y - 10, 20, 20);
+				Rectangle r = new Rectangle(p.x - 8, p.y - 8, 16, 16);
 				for(Figure f : figures) {
 					if (f.intersects(r)) {
 						selectedFigure = f;
@@ -77,7 +77,9 @@ public class SimpCAD extends JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 //				System.out.println("pressed");
-				startPoint = e.getPoint();
+				Point p = e.getPoint();
+				startPoint = p;
+				endPoint = p;
 			}
 
 			@Override
@@ -89,6 +91,7 @@ public class SimpCAD extends JPanel {
 					pendingFigure = null;					
 					canvas.repaint();
 				}
+
 			}
 			
 		});
@@ -97,16 +100,18 @@ public class SimpCAD extends JPanel {
 		
 			@Override
 			public void mouseDragged(MouseEvent e) {
-//				System.out.println("dragged");
+				lastEndPoint = endPoint;
 				endPoint = e.getPoint();
-//				System.out.println("end point set at " + e.getPoint());
-				if (pendingFigure != null) {
+				if (pendingFigure != null) {					
 					pendingFigure.setBounds(startPoint, endPoint);
-//					System.out.println("points set " + startPoint + endPoint);
 					canvas.repaint();
-//					System.out.println("repainted");
 					pendingFigure.draw(canvas.getGraphics());
-					System.out.println("draw called");
+				}
+				else if (selectedFigure != null) {
+					selectedFigure.setLocation(lastEndPoint, endPoint);
+					System.out.println(selectedFigure.getCenterX() + "," +
+					selectedFigure.getCenterY());
+					canvas.repaint();
 				}
 			}
 			
@@ -117,22 +122,28 @@ public class SimpCAD extends JPanel {
 			
 			@Override
 			public void keyPressed (KeyEvent e) {
-				if ( selectedFigure != null && e.isControlDown()) {
-					System.out.println("detected selected not null & ctrl down");
-					int keyCode = e.getExtendedKeyCode();
-					switch (keyCode) {
-					case KeyEvent.VK_COMMA:
-						System.out.println("evoked ctrl + , ");
-						selectedFigure.setSizePercent(0.8); break;
-					case KeyEvent.VK_PERIOD:
-						selectedFigure.setSizePercent(1.2); break;
-					case KeyEvent.VK_OPEN_BRACKET:
-						selectedFigure.changeStrokeWidth(-1); break;
-					case KeyEvent.VK_CLOSE_BRACKET:
-						selectedFigure.changeStrokeWidth(1); break;
+				if ( selectedFigure != null ) {
+					if (e.isControlDown()){
+						int keyCode = e.getExtendedKeyCode();
+						switch (keyCode) {
+						case KeyEvent.VK_COMMA:
+							System.out.println("evoked ctrl + , ");
+							selectedFigure.setSizePercent(0.8); break;
+						case KeyEvent.VK_PERIOD:
+							selectedFigure.setSizePercent(1.2); break;
+						case KeyEvent.VK_OPEN_BRACKET:
+							selectedFigure.changeStrokeWidth(-1); break;
+						case KeyEvent.VK_CLOSE_BRACKET:
+							selectedFigure.changeStrokeWidth(1); break;
+						}
+						canvas.repaint();
 					}
-					canvas.repaint();
+					else if (e.getExtendedKeyCode() == KeyEvent.VK_DELETE) {
+						figures.remove(selectedFigure);
+						canvas.repaint();
+					}
 				}
+
 			}
 
 		});

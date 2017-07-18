@@ -60,6 +60,12 @@ public class Line extends Figure {
 		updateLine();
 	}
 	
+	@Override
+	public void setLocation(Point start, Point end) {
+		super.setLocation(start, end);
+		updateLine();
+	}
+	
 	private void updateLine() {
 		Point p1 = new Point();
 		Point p2 = new Point();
