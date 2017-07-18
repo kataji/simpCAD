@@ -6,14 +6,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-public class Rectangle extends Rectangle2D.Float implements Figure {
+public class Rectangle extends Rectangle2D.Double implements Figure {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 5274142611530412079L;
-	private Color color = Color.BLACK;
-	private float strokeWidth = 3;
+	protected Color color = Color.BLACK;
+	protected float strokeWidth = 3;
 	
 	public Rectangle(double x, double y, double w, double h) {
 //		super(x, y, w, h);
@@ -77,12 +77,4 @@ public class Rectangle extends Rectangle2D.Float implements Figure {
 		return new Point(x + width/2, y + height/2);
 	}
 
-	@Override
-	public int hashCode() {
-        long bits = java.lang.Double.doubleToLongBits((int)getX());
-        bits += java.lang.Double.doubleToLongBits((int)getY()) * 37;
-        bits += java.lang.Double.doubleToLongBits((int)getWidth()) * 43;
-        bits += java.lang.Double.doubleToLongBits((int)getHeight()) * 47;
-        return (((int) bits) ^ ((int) (bits >> 32)));
-	}	
 }

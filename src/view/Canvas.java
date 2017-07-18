@@ -1,16 +1,19 @@
 package view;
 
 import java.awt.Graphics;
-import java.util.HashSet;
 
 import javax.swing.JPanel;
 
 import figure.Figure;
 
 public class Canvas extends JPanel{
-	private HashSet<Figure> figures;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9050728494984056759L;
+	private GenericList<Figure> figures;
 	
-	public Canvas(HashSet<Figure> figures) {
+	public Canvas(GenericList<Figure> figures) {
 		this.figures = figures;
 	}
 	

@@ -37,6 +37,7 @@ import figure.Point;
 import figure.Rectangle;
 import figure.StringFigure;
 import view.Canvas;
+import view.GenericList;
 
 public class SimpCAD extends JPanel {
 	
@@ -54,7 +55,7 @@ public class SimpCAD extends JPanel {
 	private Point lastEndPoint;
 	private Figure pendingFigure = null;
 	private Figure selectedFigure = null;
-	private GenericSet<Figure> figures = new GenericSet<>(Figure.class);
+	private GenericList<Figure> figures = new GenericList<>(Figure.class);
 	
 	public SimpCAD() {
 		setUpMenuBar();
@@ -109,11 +110,11 @@ public class SimpCAD extends JPanel {
 				else {
 					Object o = readObjectFromFile(file);
 					boolean castSuccess = false;
-					if (o instanceof GenericSet<?> ) {
-						GenericSet<?> s = (GenericSet<?>) o;
+					if (o instanceof GenericList<?> ) {
+						GenericList<?> s = (GenericList<?>) o;
 						if(s.getGenericType().equals(Figure.class)) {
 							@SuppressWarnings("unchecked")
-							GenericSet<Figure> newFigures = (GenericSet<Figure>) s;
+							GenericList<Figure> newFigures = (GenericList<Figure>) s;
 							castSuccess = true;
 							
 							figures.clear();
@@ -185,7 +186,7 @@ public class SimpCAD extends JPanel {
 		aboutMenuItem.addActionListener(e -> {
 			StringBuffer sb = new StringBuffer();
 			sb.append("simpCAD\n\n");
-			sb.append("Version: 0.1.0\n");
+			sb.append("Version: 1.0.0\n");
 			sb.append("(c) Copyright kataji 2017.\n");
 			sb.append("All rights reserved. \n");
 			sb.append("https://github.com/kataji/simpCAD\n\n");
@@ -351,12 +352,7 @@ public class SimpCAD extends JPanel {
 						canvas.repaint();
 					}
 					else if (e.getExtendedKeyCode() == KeyEvent.VK_DELETE) {
-						boolean removed = figures.remove(selectedFigure);
-						System.out.println("entered del handling");
-						System.out.println("contained:" + removed);
-						System.out.println(figures);
-						System.out.println(selectedFigure);
-						System.out.println("contains:" + figures.contains(selectedFigure));
+						figures.remove(selectedFigure);
 						canvas.repaint();
 					}
 				}
