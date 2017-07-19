@@ -1,92 +1,73 @@
 package figure;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 
-public class Line extends Figure {
-
-	private boolean startFromLeft = true;
-	private boolean startFromUp = true;
-	
-	private Line2D line = new Line2D.Double();
-	
+public class Line extends Line2D.Double implements Figure {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6891657773707847266L;
+	private Color color = Color.BLACK;
+	private float strokeWidth = 3;
+		
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(color);
 		((Graphics2D)g).setStroke(new BasicStroke(strokeWidth));
-		((Graphics2D)g).drawLine((int)line.getX1(), (int)line.getY1(), 
-				(int)line.getX2(), (int)line.getY2());
+		((Graphics2D)g).drawLine((int)getX1(), (int)getY1(), 
+				(int)getX2(), (int)getY2());
 	}
 	
 	@Override
-	public void setBounds(Point p1, Point p2) {
-		super.setBounds(p1, p2);
-		line.setLine(p1, p2);
-		if (p1.x != x) {
-			startFromLeft = false;
-		}
-		if (p1.y != y) {
-			startFromUp = false;
-		}
-	}
-	
-	@Override	
-	public boolean contains(double x, double y) {
-		return line.contains(x, y);
-	}
-	
-	@Override
-	public boolean intersects(double x, double y, double w, double h) {
-		return line.intersects(x, y, w, h);
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 	@Override
-	public boolean contains(double x, double y, double w, double h) {
-		return line.contains(x, y, w, h);
+	public void changeStrokeWidth(float inc) {
+		float newStrokeWidth = strokeWidth + inc;
+		if (newStrokeWidth >= 1) {
+			strokeWidth = newStrokeWidth;
+		}
 	}
-	
+
 	@Override
-	public void setFrame(double x, double y, double w, double h) {
-		super.setFrame(x, y, w, h);
-		updateLine();
+	public boolean isSelected(Rectangle r) {
+		return intersects(r);
 	}
 
 	@Override
 	public void setSizePercent(double sizePercent) {
-		super.setSizePercent(sizePercent);
-		updateLine();
+		Point2D p = getCenter();
+		x1 = x1 * sizePercent + p.getX() * (1 - sizePercent);
+		y1 = y1 * sizePercent + p.getY() * (1 - sizePercent);
+		x2 = x2 * sizePercent + p.getX() * (1 - sizePercent);
+		y2 = y2 * sizePercent + p.getY() * (1 - sizePercent);
 	}
-	
+
+	@Override
+	public void setFigure(Point p1, Point p2) {
+		setLine(p1, p2);
+	}
+
 	@Override
 	public void setLocation(Point start, Point end) {
-		super.setLocation(start, end);
-		updateLine();
+		double dX = end.getX() - start.getX();
+		double dY = end.getY() - start.getY();
+		x1 += dX;
+		x2 += dX;
+		y1 += dY;
+		y2 += dY;
 	}
-	
-	private void updateLine() {
-		Point p1 = new Point();
-		Point p2 = new Point();
-		if (startFromLeft) {
-			p1.x = x;
-			p2.x = x + width;
-		}
-		else {
-			p2.x = x;
-			p1.x = x + width;
-		}
-		
-		if (startFromUp) {
-			p1.y = y;
-			p2.y = y + height;
-		}
-		else {
-			p2.y = y;
-			p1.y = y + height;
-		}
-		
-		line.setLine(p1, p2);
+
+	@Override
+	public Point getCenter() {
+		return new Point((x1 + x2) / 2, 
+				(y1 + y2) / 2);
 	}
 }

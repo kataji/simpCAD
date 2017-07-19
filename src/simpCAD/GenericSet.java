@@ -11,6 +11,7 @@ public class GenericSet<E> extends HashSet<E> {
 	private Class<E> genericType;
 
 	public GenericSet(Class<E> c){
+		super();
 		this.genericType = c;
 	}
 

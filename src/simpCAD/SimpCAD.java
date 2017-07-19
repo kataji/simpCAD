@@ -3,8 +3,6 @@ package simpCAD;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -35,8 +33,11 @@ import javax.swing.filechooser.FileFilter;
 import figure.Ellipse;
 import figure.Figure;
 import figure.Line;
+import figure.Point;
+import figure.Rectangle;
 import figure.StringFigure;
 import view.Canvas;
+import view.GenericList;
 
 public class SimpCAD extends JPanel {
 	
@@ -54,7 +55,7 @@ public class SimpCAD extends JPanel {
 	private Point lastEndPoint;
 	private Figure pendingFigure = null;
 	private Figure selectedFigure = null;
-	private GenericSet<Figure> figures = new GenericSet<>(Figure.class);
+	private GenericList<Figure> figures = new GenericList<>(Figure.class);
 	
 	public SimpCAD() {
 		setUpMenuBar();
@@ -109,11 +110,11 @@ public class SimpCAD extends JPanel {
 				else {
 					Object o = readObjectFromFile(file);
 					boolean castSuccess = false;
-					if (o instanceof GenericSet<?> ) {
-						GenericSet<?> s = (GenericSet<?>) o;
+					if (o instanceof GenericList<?> ) {
+						GenericList<?> s = (GenericList<?>) o;
 						if(s.getGenericType().equals(Figure.class)) {
 							@SuppressWarnings("unchecked")
-							GenericSet<Figure> newFigures = (GenericSet<Figure>) s;
+							GenericList<Figure> newFigures = (GenericList<Figure>) s;
 							castSuccess = true;
 							
 							figures.clear();
@@ -170,7 +171,7 @@ public class SimpCAD extends JPanel {
 			sb.append("simpCAD实现了简单的绘图功能，包括直线、长方形、椭圆和文字的绘制。\n");
 			sb.append("鼠标点击右侧按钮，可选择需要绘制的图形。\n");
 			sb.append("点击后在画布内拖动绘制。\n\n");
-			sb.append("绘制后，选中图形可进行修改，包括：\n");
+			sb.append("绘制后，点击选中，可进行修改，包括：\n");
 			sb.append("更改颜色 - 使用选择颜色按钮\n");
 			sb.append("更改大小 - 使用\'Ctrl + -\'（减小）和 \'Ctrl + =\'（增大）\n");
 			sb.append("更改线条粗细 - 使用\'Ctrl + [\'（减细）和\'Ctrl + ]\'（增粗）\n");
@@ -185,7 +186,7 @@ public class SimpCAD extends JPanel {
 		aboutMenuItem.addActionListener(e -> {
 			StringBuffer sb = new StringBuffer();
 			sb.append("simpCAD\n\n");
-			sb.append("Version: 0.1.0\n");
+			sb.append("Version: 1.0.0\n");
 			sb.append("(c) Copyright kataji 2017.\n");
 			sb.append("All rights reserved. \n");
 			sb.append("https://github.com/kataji/simpCAD\n\n");
@@ -241,6 +242,7 @@ public class SimpCAD extends JPanel {
 			if (color != null) {
 				selectedFigure.setColor(color);
 				canvas.repaint();
+				canvas.requestFocusInWindow();
 			}
 		});
 		
@@ -269,10 +271,10 @@ public class SimpCAD extends JPanel {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				canvas.requestFocusInWindow();
-				Point p = e.getPoint();
+				
+				Point p = new Point(e.getPoint());
+				Rectangle r = new Rectangle(p.x-5, p.y-5, 10, 10);
 				boolean selectSuccess = false;
-				Rectangle r = new Rectangle(p.x - 8, p.y - 8, 16, 16);
 				for(Figure f : figures) {
 					if (f.isSelected(r)) {
 						selectedFigure = f;
@@ -289,7 +291,8 @@ public class SimpCAD extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				Point p = e.getPoint();
+				canvas.requestFocusInWindow();
+				Point p = new Point(e.getPoint());
 				startPoint = p;
 				endPoint = p;
 			}
@@ -299,6 +302,7 @@ public class SimpCAD extends JPanel {
 				if (pendingFigure != null) {
 					figures.add(pendingFigure);
 					selectedFigure = pendingFigure;
+					System.out.println("new: " + selectedFigure);
 					pendingFigure = null;					
 					canvas.repaint();
 				}
@@ -312,16 +316,14 @@ public class SimpCAD extends JPanel {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				lastEndPoint = endPoint;
-				endPoint = e.getPoint();
+				endPoint = new Point(e.getPoint());
 				if (pendingFigure != null) {					
-					pendingFigure.setBounds(startPoint, endPoint);
+					pendingFigure.setFigure(startPoint, endPoint);
 					canvas.repaint();
 					pendingFigure.draw(canvas.getGraphics());
 				}
 				else if (selectedFigure != null) {
 					selectedFigure.setLocation(lastEndPoint, endPoint);
-					System.out.println(selectedFigure.getCenterX() + "," +
-					selectedFigure.getCenterY());
 					canvas.repaint();
 				}
 			}
