@@ -14,7 +14,7 @@ public interface Figure extends Shape, Serializable{
 //	protected float strokeWidth = 3;
 //	
 	void setColor(Color color);
-//	public void setColor(Color color) {
+//	public default void setColor(Color color) {
 //		this.color = color;
 //	}
 //	

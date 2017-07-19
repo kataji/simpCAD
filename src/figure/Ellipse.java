@@ -52,7 +52,7 @@ public class Ellipse extends Ellipse2D.Double implements Figure {
 
 	@Override
 	public boolean isSelected(Rectangle r) {
-		return intersects(r);
+		return intersects(r) && !contains(r);
 	}
 
 	@Override

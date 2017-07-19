@@ -35,11 +35,6 @@ public class StringFigure extends Rectangle{
 	}
 	
 	@Override
-	public boolean isSelected(Rectangle r) {
-		return intersects(r) || contains(r);
-	}
-
-	@Override
 	public void changeStrokeWidth(float inc) {
 		float newStrokeWidth = strokeWidth + inc;
 		if (newStrokeWidth > 3) {
@@ -76,6 +71,11 @@ public class StringFigure extends Rectangle{
 		updateSize();
 	}
     
+	@Override
+	public boolean isSelected(Rectangle r) {
+		return intersects(r);
+	}
+	
 	private void updateSize(){
 		int numChinese = countChinese(str);
 		int numWestern = str.length() - numChinese;

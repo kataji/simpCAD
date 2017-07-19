@@ -69,7 +69,7 @@ public class Rectangle extends Rectangle2D.Double implements Figure {
 
 	@Override
 	public boolean isSelected(Rectangle r) {
-		return intersects(r);
+		return intersects(r) && !contains(r);
 	}
 
 	@Override
